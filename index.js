@@ -10,8 +10,8 @@ function getRandomVideoSearch() {
 
 window.onload = (event) => {
 
-	const ytAPIkey = "";
-	const maxAttempts = 5;
+	let ytAPIkey = "";
+	let maxAttempts = 5;
 
 	fetch('config.json')
 		.then(response => response.json())
@@ -28,22 +28,28 @@ window.onload = (event) => {
 		if (attempts <= maxAttempts) {
 			document.getElementById("try-again").disabled = true;
 			let ytSearchString = getRandomVideoSearch();
-			$.ajax({
-				type: 'GET',
-				url: "https://www.googleapis.com/youtube/v3/search",
-				crossDomain: true,
-				data: {
-					key: ytAPIkey,
-					part: 'snippet',
-					type: 'video',
-					q: ytSearchString
-				},
-				error: function (response) {
-					getNewVideo();
-				},
-				success: function (response) {
-					if (response.items.length) {
-						const items = response.items;
+
+			const url = new URL("https://www.googleapis.com/youtube/v3/search")
+			let params = {
+				key: ytAPIkey,
+				part: 'snippet',
+				type: 'video',
+				q: ytSearchString
+			}
+
+			url.search = new URLSearchParams(params).toString();
+
+			fetch(url)
+				.then((response) => {
+					if (response.ok) {
+						return response.json();
+					} else {
+						throw new Error('Something went wrong');
+					}
+				})
+				.then((responseJson) => {
+					if (responseJson.items.length) {
+						const items = responseJson.items;
 						const ytId = items[Math.floor(Math.random() * items.length)].id.videoId;
 						document.getElementById("yt").src = '//www.youtube.com/embed/' + ytId + '?rel=0&autoplay=1';
 						document.getElementById("try-again").disabled = false;
@@ -51,8 +57,10 @@ window.onload = (event) => {
 					else {
 						getNewVideo();
 					}
-				},
-			});
+				})
+				.catch((error) => {
+					console.log(error)
+				});
 		} else {
 			document.getElementById("try-again").disabled = false;
 		}
