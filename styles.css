@@ -1,0 +1,17 @@
+body {
+	display: block;
+	margin: 0px;
+	background-color: #111;
+	height: 100vh;
+}
+
+#yt {
+	display: block;
+	margin: 20px auto 0 auto;
+	/* filter: grayscale(1); */
+}
+
+button {
+	display: block;
+	margin: 0 auto;
+}
