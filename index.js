@@ -1,33 +1,33 @@
 function getRandomVideoSearch() {
-	const codeLength = 5;
-	const possibles = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-_";
+	const codeLength = 5
+	const possibles = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-_"
 	let code = "";
 	for (let i = 0; i < codeLength; i++) {
-		code += possibles.charAt(Math.floor(Math.random() * possibles.length));
+		code += possibles.charAt(Math.floor(Math.random() * possibles.length))
 	}
-	return code;
+	return code
 }
 
-window.onload = (event) => {
+window.onload = () => {
 
-	let ytAPIkey = "";
-	let maxAttempts = 5;
+	let ytAPIkey = ""
+	let maxAttempts = 5
 
 	fetch('config.json')
 		.then(response => response.json())
 		.then(data => {
-			ytAPIkey = data.youtubeAPIkey;
-			maxAttempts = data.maxAttempts;
-		});
+			ytAPIkey = data.youtubeAPIkey
+			maxAttempts = data.maxAttempts
+		})
 
-	var attempts = 0;
+	var attempts = 0
 
 	function getNewVideo() {
-		attempts++;
+		attempts++
 
 		if (attempts <= maxAttempts) {
-			document.getElementById("try-again").disabled = true;
-			let ytSearchString = getRandomVideoSearch();
+			document.getElementById("try-again").disabled = true
+			let ytSearchString = getRandomVideoSearch()
 
 			const url = new URL("https://www.googleapis.com/youtube/v3/search")
 			let params = {
@@ -37,39 +37,39 @@ window.onload = (event) => {
 				q: ytSearchString
 			}
 
-			url.search = new URLSearchParams(params).toString();
+			url.search = new URLSearchParams(params).toString()
 
 			fetch(url)
 				.then((response) => {
 					if (response.ok) {
-						return response.json();
+						return response.json()
 					} else {
-						throw new Error('Something went wrong');
+						throw new Error('Something went wrong')
 					}
 				})
 				.then((responseJson) => {
 					if (responseJson.items.length) {
-						const items = responseJson.items;
-						const ytId = items[Math.floor(Math.random() * items.length)].id.videoId;
-						document.getElementById("yt").src = '//www.youtube.com/embed/' + ytId + '?rel=0&autoplay=1';
-						document.getElementById("try-again").disabled = false;
+						const items = responseJson.items
+						const ytId = items[Math.floor(Math.random() * items.length)].id.videoId
+						document.getElementById("yt").src = '//www.youtube.com/embed/' + ytId + '?rel=0&autoplay=1'
+						document.getElementById("try-again").disabled = false
 					}
 					else {
-						getNewVideo();
+						getNewVideo()
 					}
 				})
 				.catch((error) => {
 					console.log(error)
-				});
+				})
 		} else {
-			document.getElementById("try-again").disabled = false;
+			document.getElementById("try-again").disabled = false
 		}
 	}
 
-	getNewVideo();
+	getNewVideo()
 
 	document.getElementById("try-again").addEventListener("click", function () {
-		getNewVideo();
-	});
+		getNewVideo()
+	})
 
-};
+}

@@ -7,8 +7,10 @@ body {
 
 #yt {
 	display: block;
-	margin: 20px auto 0 auto;
-	/* filter: grayscale(1); */
+	margin: 0 auto 0 auto;
+	width: 100%;
+	height:100%;
+	filter: grayscale(1);
 }
 
 button {
